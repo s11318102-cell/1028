@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INK & SOUL | 高階客製紋身藝廊工作室</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- GSAP & ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            400: '#D4AF37',
+                            500: '#C5A028',
+                            600: '#A38118',
+                        },
+                        dark: {
+                            900: '#0A0A0A',
+                            800: '#121212',
+                            700: '#1A1A1A',
+                            600: '#262626',
+                        }
+                    },
+                    fontFamily: {
+                        cinzel: ['Cinzel', 'serif'],
+                        sans: ['Noto Sans TC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0A0A0A;
+            color: #E5E5E5;
+            font-family: 'Noto Sans TC', sans-serif;
+            overflow-x: hidden;
+        }
+        .font-cinzel {
+            font-family: 'Cinzel', serif;
+        }
+        /* Custom Custom Cursor */
+        .custom-cursor {
+            pointer-events: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 9999;
+            transition: transform 0.15s ease-out, opacity 0.2s ease-in-out;
+        }
+        /* Glassmorphism Effect */
+        .glass-card {
+            background: rgba(26, 26, 26, 0.65);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+        .glass-card:hover {
+            border-color: rgba(212, 175, 55, 0.5);
+        }
+        /* Gold Gradient Text */
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #FFF 0%, #D4AF37 50%, #AA7C11 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-dark-900 text-gray-200 antialiased selection:bg-gold-500 selection:text-black">
+
+    <!-- Custom Cursor Glow -->
+    <div id="cursor" class="custom-cursor w-8 h-8 rounded-full border border-gold-400/60 mix-blend-difference hidden md:block"></div>
+    <div id="cursor-dot" class="custom-cursor w-2 h-2 rounded-full bg-gold-400 hidden md:block"></div>
+
+    <!-- Navigation Bar -->
+    <nav id="navbar" class="fixed top-0 left-0 w-full z-50 transition-all duration-300 py-5 px-6 md:px-12 flex justify-between items-center bg-dark-900/80 backdrop-blur-md border-b border-white/5">
+        <a href="#hero" class="flex items-center gap-3 group">
+            <div class="w-10 h-10 border border-gold-400/80 rounded-full flex items-center justify-center group-hover:bg-gold-400 group-hover:text-black transition-all duration-300">
+                <i class="fa-solid me-0 fa-pen-nib text-gold-400 group-hover:text-black transition-colors"></i>
+            </div>
+            <span class="font-cinzel text-xl font-bold tracking-widest text-white group-hover:text-gold-400 transition-colors">INK & SOUL</span>
+        </a>
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center gap-8 font-cinzel text-sm tracking-wider">
+            <a href="#about" class="hover:text-gold-400 transition-colors">ABOUT</a>
+            <a href="#services" class="hover:text-gold-400 transition-colors">SERVICES</a>
+            <a href="#works" class="hover:text-gold-400 transition-colors">PORTFOLIO</a>
+            <a href="#case-study" class="hover:text-gold-400 transition-colors">CASE STUDY</a>
+            <a href="#artists" class="hover:text-gold-400 transition-colors">ARTISTS</a>
+            <a href="#ai-doc" class="hover:text-gold-400 transition-colors text-xs text-gold-400/80 border border-gold-400/30 px-2 py-1 rounded">AI 協作紀錄</a>
+        </div>
+
+        <a href="#contact" class="hidden md:inline-block px-6 py-2.5 border border-gold-400 text-gold-400 font-cinzel text-xs tracking-widest rounded-full hover:bg-gold-400 hover:text-black transition-all duration-300 shadow-lg shadow-gold-400/10">
+            BOOK NOW
+        </a>
+
+        <!-- Mobile Menu Toggle -->
+        <button id="mobile-menu-btn" class="md:hidden text-2xl text-white focus:outline-none">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </nav>
+
+    <!-- Mobile Drawer Navigation -->
+    <div id="mobile-drawer" class="fixed inset-0 bg-dark-900/95 z-40 backdrop-blur-xl flex flex-col justify-center items-center gap-8 font-cinzel text-xl tracking-widest opacity-0 pointer-events-none transition-all duration-300">
+        <a href="#about" class="mobile-link hover:text-gold-400">ABOUT</a>
+        <a href="#services" class="mobile-link hover:text-gold-400">SERVICES</a>
+        <a href="#works" class="mobile-link hover:text-gold-400">PORTFOLIO</a>
+        <a href="#case-study" class="mobile-link hover:text-gold-400">CASE STUDY</a>
+        <a href="#artists" class="mobile-link hover:text-gold-400">ARTISTS</a>
+        <a href="#ai-doc" class="mobile-link hover:text-gold-400 text-base">AI 協作紀錄</a>
+        <a href="#contact" class="mobile-link mt-4 px-8 py-3 bg-gold-400 text-black rounded-full font-bold">BOOK NOW</a>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <main class="w-full overflow-hidden">
+
+        <!-- 01 HERO SECTION -->
+        <section id="hero" class="relative min-h-screen flex items-center justify-center pt-24 pb-12 px-6">
+            <!-- Background Image Overlay with Dark Gradient -->
+            <div class="absolute inset-0 z-0 opacity-25 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&q=80&w=1600');"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-dark-900/60 via-dark-900/90 to-dark-900 z-0"></div>
+
+            <div class="relative z-10 max-w-5xl mx-auto text-center space-y-8">
+                <div class="hero-anim inline-block px-4 py-1.5 border border-gold-400/40 rounded-full bg-gold-400/5 text-gold-400 text-xs tracking-widest uppercase mb-2">
+                    Custom Tattoo & Dark Aesthetics Studio
+                </div>
+                <h1 class="hero-anim font-cinzel text-4xl sm:text-6xl md:text-7xl font-black tracking-wider leading-tight text-white">
+                    WE INK YOUR <span class="gold-gradient-text">INNER SOUL</span>
+                </h1>
+                <p class="hero-anim text-gray-400 max-w-2xl mx-auto text-base sm:text-lg font-light leading-relaxed">
+                    每一道刺青都是靈魂的獨白。我們結合現代黑灰細線、幾何抽象與美式復古，為您量身打造終身雕琢的專屬符號。
+                </p>
+                <div class="hero-anim flex flex-col sm:flex-row justify-center items-center gap-4 pt-4">
+                    <a href="#contact" class="w-full sm:w-auto px-8 py-4 bg-gold-400 text-black font-cinzel font-bold text-sm tracking-widest rounded-full hover:bg-gold-500 hover:shadow-lg hover:shadow-gold-400/20 transition-all duration-300">
+                        預約諮詢 BOOK A SESSION
+                    </a>
+                    <a href="#works" class="w-full sm:w-auto px-8 py-4 border border-white/20 text-white font-cinzel text-sm tracking-widest rounded-full hover:bg-white/5 hover:border-gold-400/60 transition-all duration-300">
+                        瀏覽作品 EXPLORE ART
+                    </a>
+                </div>
+            </div>
+
+            <!-- Scroll Down Indicator -->
+            <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-500 text-xs font-cinzel tracking-widest animate-bounce">
+                <span>SCROLL</span>
+                <i class="fa-solid fa-chevron-down text-gold-400"></i>
+            </div>
+        </section>
+
+
+        <!-- 02 ABOUT & PROJECT BRIEF SECTION -->
+        <section id="about" class="py-24 px-6 md:px-12 max-w-7xl mx-auto border-t border-white/5">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div class="space-y-6 scroll-reveal">
+                    <div class="text-gold-400 text-xs font-cinzel tracking-widest">ABOUT INK & SOUL</div>
+                    <h2 class="font-cinzel text-3xl md:text-5xl font-bold leading-tight">不只是刺青，<br>是一場靈魂與皮膚的對話。</h2>
+                    <p class="text-gray-400 text-base leading-relaxed">
+                        成立於 2021 年，INK & SOUL 紋身工作室致力於提供頂級客製化刺青體驗。我們堅持一客一圖原則，確保每一位顧客的皮膚創作皆為獨一無二。
+                    </p>
+                    <div class="grid grid-cols-2 gap-6 pt-4">
+                        <div class="border-l-2 border-gold-400 pl-4">
+                            <div class="font-cinzel text-3xl font-bold text-white">100%</div>
+                            <div class="text-xs text-gray-400 mt-1">原創專屬設計</div>
+                        </div>
+                        <div class="border-l-2 border-gold-400 pl-4">
+                            <div class="font-cinzel text-3xl font-bold text-white">12,000+</div>
+                            <div class="text-xs text-gray-400 mt-1">完美完成作品</div>
+                        </div>
+                        <div class="border-l-2 border-gold-400 pl-4">
+                            <div class="font-cinzel text-3xl font-bold text-white">Medical</div>
+                            <div class="text-xs text-gray-400 mt-1">醫療級拋棄式消毒</div>
+                        </div>
+                        <div class="border-l-2 border-gold-400 pl-4">
+                            <div class="font-cinzel text-3xl font-bold text-white">4 Artists</div>
+                            <div class="text-xs text-gray-400 mt-1">駐店專屬風格藝師</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative scroll-reveal">
+                    <div class="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl relative">
+                        <img src="https://images.unsplash.com/photo-1562962230-16e4623d36e6?auto=format&fit=crop&q=80&w=1000" alt="Tattoo Studio Artist at work" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark-900 via-transparent to-transparent"></div>
+                    </div>
+                    <!-- Decorative Floating Card -->
+                    <div class="glass-card absolute -bottom-6 -left-6 p-6 rounded-xl hidden sm:block max-w-xs shadow-xl">
+                        <i class="fa-solid fa-quote-left text-gold-400 text-2xl mb-2"></i>
+                        <p class="text-xs text-gray-300 italic">「皮膚是生命的畫布，針尖下紀錄的是靈魂真實的重量。」</p>
+                        <p class="text-right text-xs text-gold-400 font-cinzel mt-2">— 主理人 & 首席藝師 K</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 03 SERVICES SECTION -->
+        <section id="services" class="py-24 px-6 md:px-12 bg-dark-800/50 border-t border-b border-white/5">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center max-w-2xl mx-auto mb-16 scroll-reveal">
+                    <div class="text-gold-400 text-xs font-cinzel tracking-widest mb-2">OUR EXPERTISE</div>
+                    <h2 class="font-cinzel text-3xl md:text-4xl font-bold">客製化設計與服務項目</h2>
+                    <p class="text-gray-400 text-sm mt-3">從初次溝通、風格定稿到術後完整保養，提供最專業的完整流程。</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Service Card 1 -->
+                    <div class="glass-card p-8 rounded-2xl space-y-4 hover:-translate-y-2 transition-all duration-300 scroll-reveal">
+                        <div class="w-14 h-14 bg-gold-400/10 border border-gold-400/30 rounded-xl flex items-center justify-center text-gold-400 text-2xl">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <h3 class="font-cinzel text-xl font-bold text-white">客製主題刺青</h3>
+                        <p class="text-gray-400 text-xs leading-relaxed">一對一深入訪談，將您的理念、故事或信仰轉化為專屬的視覺圖騰，絕不複製任何作品。</p>
+                        <div class="text-gold-400 text-xs font-cinzel pt-2 flex items-center gap-2">
+                            <span>適合：專屬圖案需求者</span>
+                        </div>
+                    </div>
+
+                    <!-- Service Card 2 -->
+                    <div class="glass-card p-8 rounded-2xl space-y-4 hover:-translate-y-2 transition-all duration-300 scroll-reveal">
+                        <div class="w-14 h-14 bg-gold-400/10 border border-gold-400/30 rounded-xl flex items-center justify-center text-gold-400 text-2xl">
+                            <i class="fa-solid fa-compass-drafting"></i>
+                        </div>
+                        <h3 class="font-cinzel text-xl font-bold text-white">舊圖蓋圖與修飾</h3>
+                        <p class="text-gray-400 text-xs leading-relaxed">專業評估舊刺青或疤痕，運用巧妙構造與暗色構圖重新設計，賦予皮膚全新璀璨生命。</p>
+                        <div class="text-gold-400 text-xs font-cinzel pt-2 flex items-center gap-2">
+                            <span>適合：舊圖修改、遮疤需求</span>
+                        </div>
+                    </div>
+
+                    <!-- Service Card 3 -->
+                    <div class="glass-card p-8 rounded-2xl space-y-4 hover:-translate-y-2 transition-all duration-300 scroll-reveal">
+                        <div class="w-14 h-14 bg-gold-400/10 border border-gold-400/30 rounded-xl flex items-center justify-center text-gold-400 text-2xl">
+                            <i class="fa-solid fa-paintbrush"></i>
+                        </div>
+                        <h3 class="font-cinzel text-xl font-bold text-white">黑灰細線與幾何</h3>
+                        <p class="text-gray-400 text-xs leading-relaxed">擅長高難度的微刺青、細緻點陣素描、文字線條與歐美寫實素描，呈現極致細節。</p>
+                        <div class="text-gold-400 text-xs font-cinzel pt-2 flex items-center gap-2">
+                            <span>適合：極簡、細緻風格愛好者</span>
+                        </div>
+                    </div>
+
+                    <!-- Service Card 4 -->
+                    <div class="glass-card p-8 rounded-2xl space-y-4 hover:-translate-y-2 transition-all duration-300 scroll-reveal">
+                        <div class="w-14 h-14 bg-gold-400/10 border border-gold-400/30 rounded-xl flex items-center justify-center text-gold-400 text-2xl">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <h3 class="font-cinzel text-xl font-bold text-white">醫療級衛生與保養</h3>
+                        <p class="text-gray-400 text-xs leading-relaxed">全店使用高規格一次性拋棄式針頭與衛生耗材，並提供專屬醫用修復貼膜與保養教學。</p>
+                        <div class="text-gold-400 text-xs font-cinzel pt-2 flex items-center gap-2">
+                            <span>適合：所有首刺與重視品質者</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 04 PORTFOLIO / WORKS SECTION (Categorized) -->
+        <section id="works" class="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6 scroll-reveal">
+                <div>
+                    <div class="text-gold-400 text-xs font-cinzel tracking-widest mb-2">PORTFOLIO GALLERY</div>
+                    <h2 class="font-cinzel text-3xl md:text-4xl font-bold">精選紋身作品集</h2>
+                </div>
+
+                <!-- Category Filters -->
+                <div id="filter-buttons" class="flex flex-wrap gap-2">
+                    <button data-filter="all" class="filter-btn px-4 py-2 text-xs font-cinzel rounded-full bg-gold-400 text-black font-bold transition-all">ALL</button>
+                    <button data-filter="blackwork" class="filter-btn px-4 py-2 text-xs font-cinzel rounded-full bg-dark-700 text-gray-300 hover:text-gold-400 border border-white/5 transition-all">BLACKWORK</button>
+                    <button data-filter="fineline" class="filter-btn px-4 py-2 text-xs font-cinzel rounded-full bg-dark-700 text-gray-300 hover:text-gold-400 border border-white/5 transition-all">FINE LINE</button>
+                    <button data-filter="realism" class="filter-btn px-4 py-2 text-xs font-cinzel rounded-full bg-dark-700 text-gray-300 hover:text-gold-400 border border-white/5 transition-all">REALISM</button>
+                </div>
+            </div>
+
+            <!-- Portfolio Grid -->
+            <div id="portfolio-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Item 1 -->
+                <div class="portfolio-item group relative overflow-hidden rounded-2xl bg-dark-800 aspect-[3/4] scroll-reveal" data-category="blackwork">
+                    <img src="https://images.unsplash.com/photo-1590247813693-5541d1c609fd?auto=format&fit=crop&q=80&w=800" alt="Blackwork Tattoo" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300"></div>
+                    <div class="absolute bottom-0 left-0 p-6 w-full space-y-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                        <span class="text-[10px] font-cinzel tracking-widest text-gold-400 px-2.5 py-1 border border-gold-400/40 rounded-full bg-black/40">BLACKWORK</span>
+                        <h3 class="font-cinzel text-xl font-bold text-white">暗黑幾何骷髏 (Dark Skull Geometry)</h3>
+                        <p class="text-xs text-gray-300 line-clamp-2">運用強烈點陣與高對比黑塊，呈現對於生命與時間重塑的敬畏。</p>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="portfolio-item group relative overflow-hidden rounded-2xl bg-dark-800 aspect-[3/4] scroll-reveal" data-category="fineline">
+                    <img src="https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?auto=format&fit=crop&q=80&w=800" alt="Fine Line Tattoo" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300"></div>
+                    <div class="absolute bottom-0 left-0 p-6 w-full space-y-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                        <span class="text-[10px] font-cinzel tracking-widest text-gold-400 px-2.5 py-1 border border-gold-400/40 rounded-full bg-black/40">FINE LINE</span>
+                        <h3 class="font-cinzel text-xl font-bold text-white">幾何星芒與微光 (Celestial Lines)</h3>
+                        <p class="text-xs text-gray-300 line-clamp-2">極細01號針尖雕琢，將星軌與幾何線條優雅貼合於前臂。</p>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="portfolio-item group relative overflow-hidden rounded-2xl bg-dark-800 aspect-[3/4] scroll-reveal" data-category="realism">
+                    <img src="https://images.unsplash.com/photo-1550684848-bac1c5b4e853?auto=format&fit=crop&q=80&w=800" alt="Realism Tattoo" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300"></div>
+                    <div class="absolute bottom-0 left-0 p-6 w-full space-y-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                        <span class="text-[10px] font-cinzel tracking-widest text-gold-400 px-2.5 py-1 border border-gold-400/40 rounded-full bg-black/40">REALISM</span>
+                        <h3 class="font-cinzel text-xl font-bold text-white">古典雕像素描 (Classic Statue)</h3>
+                        <p class="text-xs text-gray-300 line-clamp-2">細膩光影階調層次，於皮膚上演繹大理石般的立體質感。</p>
+                    </div>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="portfolio-item group relative overflow-hidden rounded-2xl bg-dark-800 aspect-[3/4] scroll-reveal" data-category="blackwork">
+                    <img src="https://images.unsplash.com/photo-1565058381282-72122674e508?auto=format&fit=crop&q=80&w=800" alt="Blackwork Tattoo 2" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300"></div>
+                    <div class="absolute bottom-0 left-0 p-6 w-full space-y-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                        <span class="text-[10px] font-cinzel tracking-widest text-gold-400 px-2.5 py-1 border border-gold-400/40 rounded-full bg-black/40">BLACKWORK</span>
+                        <h3 class="font-cinzel text-xl font-bold text-white">哥特黑蔓藤 (Gothic Botanical)</h3>
+                        <p class="text-xs text-gray-300 line-clamp-2">順應肌肉線條流動的暗黑植物符號，帶有神祕古典氣息。</p>
+                    </div>
+                </div>
+
+                <!-- Item 5 -->
+                <div class="portfolio-item group relative overflow-hidden rounded-2xl bg-dark-800 aspect-[3/4] scroll-reveal" data-category="fineline">
+                    <img src="https://images.unsplash.com/photo-1542359649-31e03cd4d909?auto=format&fit=crop&q=80&w=800" alt="Fine line tattoo 2" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300"></div>
+                    <div class="absolute bottom-0 left-0 p-6 w-full space-y-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                        <span class="text-[10px] font-cinzel tracking-widest text-gold-400 px-2.5 py-1 border border-gold-400/40 rounded-full bg-black/40">FINE LINE</span>
+                        <h3 class="font-cinzel text-xl font-bold text-white">極簡文字與座標 (Minimal Coordinates)</h3>
+                        <p class="text-xs text-gray-300 line-clamp-2">紀念生命重大轉折點的精確幾何緯度圖騰。</p>
+                    </div>
+                </div>
+
+                <!-- Item 6 -->
+                <div class="portfolio-item group relative overflow-hidden rounded-2xl bg-dark-800 aspect-[3/4] scroll-reveal" data-category="realism">
+                    <img src="https://images.unsplash.com/photo-1568515045052-f9a854d7a618?auto=format&fit=crop&q=80&w=800" alt="Realism Tattoo 2" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300"></div>
+                    <div class="absolute bottom-0 left-0 p-6 w-full space-y-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                        <span class="text-[10px] font-cinzel tracking-widest text-gold-400 px-2.5 py-1 border border-gold-400/40 rounded-full bg-black/40">REALISM</span>
+                        <h3 class="font-cinzel text-xl font-bold text-white">野生狼眼素描 (Wolf Eyes Realism)</h3>
+                        <p class="text-xs text-gray-300 line-clamp-2">極具張力的眼神細節，呈現原始狂野與專注的美感。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 05 CASE STUDY SECTION (講義要求的 案例敘事：背景 -> 挑戰 -> 策略 -> 成果) -->
+        <section id="case-study" class="py-24 px-6 md:px-12 bg-dark-800/40 border-t border-b border-white/5">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center max-w-2xl mx-auto mb-16 scroll-reveal">
+                    <div class="text-gold-400 text-xs font-cinzel tracking-widest mb-2">FEATURED CASE STUDY</div>
+                    <h2 class="font-cinzel text-3xl md:text-4xl font-bold">案例深度敘事：重塑記憶的蓋圖設計</h2>
+                    <p class="text-gray-400 text-sm mt-3">每個複雜項目的背後，都是精心規劃的策略與極致藝廊工藝。</p>
+                </div>
+
+                <!-- Interactive Timeline / Story Sequence -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
+                    <!-- Step 1: Design Background -->
+                    <div class="case-card glass-card p-6 rounded-2xl relative space-y-3 scroll-reveal">
+                        <div class="text-gold-400 font-cinzel text-2xl font-bold">01</div>
+                        <h3 class="font-cinzel text-lg font-bold text-white">設計背景 (Background)</h3>
+                        <p class="text-xs text-gray-400 leading-relaxed">
+                            客戶於十年前留下一處褪色且構圖歪斜的微刺青，長期影響自信，希望能徹底覆蓋，轉化為展現重生信念的背部作品。
+                        </p>
+                    </div>
+
+                    <!-- Step 2: Challenge -->
+                    <div class="case-card glass-card p-6 rounded-2xl relative space-y-3 scroll-reveal">
+                        <div class="text-gold-400 font-cinzel text-2xl font-bold">02</div>
+                        <h3 class="font-cinzel text-lg font-bold text-white">面臨挑戰 (Challenge)</h3>
+                        <p class="text-xs text-gray-400 leading-relaxed">
+                            舊圖黑色墨水沉積較深，且位於肩胛骨動態肌肉區。若單純使用大面積死黑蓋圖會顯得沉重失去精緻度。
+                        </p>
+                    </div>
+
+                    <!-- Step 3: Strategy -->
+                    <div class="case-card glass-card p-6 rounded-2xl relative space-y-3 scroll-reveal">
+                        <div class="text-gold-400 font-cinzel text-2xl font-bold">03</div>
+                        <h3 class="font-cinzel text-lg font-bold text-white">設計策略 (Strategy)</h3>
+                        <p class="text-xs text-gray-400 leading-relaxed">
+                            採用哥特暗黑鳳凰題材。利用鳳凰羽毛的深色重疊區完美遮蔽舊圖墨塊，並利用流暢羽翼延伸至頸部拉長視覺比例。
+                        </p>
+                    </div>
+
+                    <!-- Step 4: Outcome -->
+                    <div class="case-card glass-card p-6 rounded-2xl relative space-y-3 scroll-reveal">
+                        <div class="text-gold-400 font-cinzel text-2xl font-bold">04</div>
+                        <h3 class="font-cinzel text-lg font-bold text-white">最終成果 (Outcome)</h3>
+                        <p class="text-xs text-gray-400 leading-relaxed">
+                            經過三次分階段Session、共計 14 小時精雕，舊圖 100% 無痕遮蔽，呈現充滿層次感與磅礡張力的黑灰藝術品。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Before / After Visual Presentation Case Study -->
+                <div class="mt-12 glass-card p-8 rounded-3xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center scroll-reveal">
+                    <div class="space-y-4">
+                        <span class="px-3 py-1 bg-gold-400/10 text-gold-400 text-xs font-cinzel rounded-full border border-gold-400/30">CASE STUDY Showcase</span>
+                        <h3 class="font-cinzel text-2xl font-bold text-white">暗黑鳳凰重生計畫 (Phoenix Cover-Up)</h3>
+                        <p class="text-gray-300 text-xs leading-relaxed">
+                            「我不僅獲得了一件完美的皮膚藝術品，更徹底解開了多年來不敢露背的心理陰影。」—— 客戶真實回饋
+                        </p>
+                        <div class="flex gap-4 text-xs font-cinzel text-gray-400 pt-2">
+                            <div><strong class="text-white">費時：</strong> 14 Hours</div>
+                            <div><strong class="text-white">風格：</strong> Dark Blackwork</div>
+                            <div><strong class="text-white">藝師：</strong> K (Chief Artist)</div>
+                        </div>
+                    </div>
+                    <div class="rounded-2xl overflow-hidden aspect-[16/9] border border-white/10 relative">
+                        <img src="https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&q=80&w=1000" alt="Case Study Result" class="w-full h-full object-cover">
+                        <div class="absolute bottom-4 right-4 bg-black/80 px-3 py-1.5 rounded-lg text-xs font-cinzel text-gold-400 border border-gold-400/30">
+                            Completed Project
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 06 ARTISTS / TEAM SECTION -->
+        <section id="artists" class="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-16 scroll-reveal">
+                <div class="text-gold-400 text-xs font-cinzel tracking-widest mb-2">RESIDENT ARTISTS</div>
+                <h2 class="font-cinzel text-3xl md:text-4xl font-bold">駐店紋身藝師團隊</h2>
+                <p class="text-gray-400 text-sm mt-3">每位藝師皆具備深厚美術學院背景與獨樹一幟的創作風格。</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Artist 1 -->
+                <div class="glass-card rounded-2xl overflow-hidden group scroll-reveal">
+                    <div class="aspect-[4/5] overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800" alt="Artist K" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark-900 via-transparent to-transparent"></div>
+                    </div>
+                    <div class="p-6 space-y-2">
+                        <div class="text-gold-400 text-xs font-cinzel tracking-widest">FOUNDER & CHIEF ARTIST</div>
+                        <h3 class="font-cinzel text-xl font-bold text-white">K (Kai)</h3>
+                        <p class="text-xs text-gray-400">專長：黑灰寫實、哥特暗黑圖騰、重構蓋圖。10年刺青資歷。</p>
+                    </div>
+                </div>
+
+                <!-- Artist 2 -->
+                <div class="glass-card rounded-2xl overflow-hidden group scroll-reveal">
+                    <div class="aspect-[4/5] overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800" alt="Artist Leo" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark-900 via-transparent to-transparent"></div>
+                    </div>
+                    <div class="p-6 space-y-2">
+                        <div class="text-gold-400 text-xs font-cinzel tracking-widest">SENIOR ARTIST</div>
+                        <h3 class="font-cinzel text-xl font-bold text-white">LEO</h3>
+                        <p class="text-xs text-gray-400">專長：極細線條 (Fine Line)、幾何符號、文字微刺青。純粹完美主義者。</p>
+                    </div>
+                </div>
+
+                <!-- Artist 3 -->
+                <div class="glass-card rounded-2xl overflow-hidden group scroll-reveal">
+                    <div class="aspect-[4/5] overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=800" alt="Artist Maya" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark-900 via-transparent to-transparent"></div>
+                    </div>
+                    <div class="p-6 space-y-2">
+                        <div class="text-gold-400 text-xs font-cinzel tracking-widest">RESIDENT ARTIST</div>
+                        <h3 class="font-cinzel text-xl font-bold text-white">MAYA</h3>
+                        <p class="text-xs text-gray-400">專長：新美式插畫、點陣素描 (Dotwork)、超現實夢境主題。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 07 CONTACT & BOOKING FORM SECTION -->
+        <section id="contact" class="py-24 px-6 md:px-12 bg-dark-800/60 border-t border-white/5 relative">
+            <div class="max-w-5xl mx-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    
+                    <!-- Left Column: Contact Info -->
+                    <div class="space-y-8 scroll-reveal">
+                        <div>
+                            <div class="text-gold-400 text-xs font-cinzel tracking-widest mb-2">APPOINTMENT & INQUIRY</div>
+                            <h2 class="font-cinzel text-3xl md:text-4xl font-bold text-white">開啟您的刺青旅程</h2>
+                            <p class="text-gray-400 text-sm mt-3 leading-relaxed">
+                                請填寫右側預約表單，我們的團隊將於 24 小時之內與您聯繫，安排一對一線上或現場諮詢時間。
+                            </p>
+                        </div>
+
+                        <div class="space-y-6 text-sm">
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 rounded-full bg-gold-400/10 border border-gold-400/30 flex items-center justify-center text-gold-400 shrink-0">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-white font-cinzel">STUDIO LOCATION</div>
+                                    <div class="text-gray-400 text-xs mt-1">台北市大安區敦化南路一段 100 號 B1</div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 rounded-full bg-gold-400/10 border border-gold-400/30 flex items-center justify-center text-gold-400 shrink-0">
+                                    <i class="fa-solid fa-clock"></i>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-white font-cinzel">OPENING HOURS</div>
+                                    <div class="text-gray-400 text-xs mt-1">Tue - Sun: 13:00 - 21:00 (週一公休 / 完全預約制)</div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 rounded-full bg-gold-400/10 border border-gold-400/30 flex items-center justify-center text-gold-400 shrink-0">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-white font-cinzel">DIRECT CONTACT</div>
+                                    <div class="text-gray-400 text-xs mt-1">booking@inksoulstudio.com | IG: @inksoul_tattoo</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Interactive Form -->
+                    <div class="glass-card p-8 rounded-3xl relative scroll-reveal">
+                        <form id="booking-form" class="space-y-5">
+                            <div>
+                                <label class="block text-xs font-cinzel text-gray-300 mb-1">您的姓名 / Name *</label>
+                                <input type="text" required class="w-full bg-dark-900/80 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-400 transition-colors" placeholder="例：林先生 / Alex">
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-cinzel text-gray-300 mb-1">電子信箱 / Email *</label>
+                                    <input type="email" required class="w-full bg-dark-900/80 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-400 transition-colors" placeholder="your@email.com">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-cinzel text-gray-300 mb-1">連絡電話 / Phone</label>
+                                    <input type="tel" class="w-full bg-dark-900/80 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-400 transition-colors" placeholder="0912-345-678">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-cinzel text-gray-300 mb-1">預約風格 / Style *</label>
+                                    <select class="w-full bg-dark-900/80 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-400 transition-colors">
+                                        <option value="blackwork">黑灰圖騰 (Blackwork)</option>
+                                        <option value="fineline">極細線條 (Fine Line)</option>
+                                        <option value="realism">寫實素描 (Realism)</option>
+                                        <option value="coverup">舊圖重構蓋圖 (Cover-Up)</option>
+                                        <option value="other">現場討論/其他 (Consultation)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-cinzel text-gray-300 mb-1">預計刺青部位 / Placement</label>
+                                    <input type="text" class="w-full bg-dark-900/80 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-400 transition-colors" placeholder="例：前臂、後肩胛">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-cinzel text-gray-300 mb-1">構想說明 / Concept Details</label>
+                                <textarea rows="3" class="w-full bg-dark-900/80 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-400 transition-colors resize-none" placeholder="請簡述您的主題理念、尺寸大小（約幾公分）與預期時間..."></textarea>
+                            </div>
+
+                            <button type="submit" class="w-full py-4 bg-gold-400 text-black font-cinzel font-bold text-xs tracking-widest rounded-xl hover:bg-gold-500 transition-all duration-300 shadow-lg shadow-gold-400/20">
+                                送出預約需求 SUBMIT REQUEST
+                            </button>
+                        </form>
+
+                        <!-- Success Message Banner -->
+                        <div id="form-success-msg" class="hidden absolute inset-0 bg-dark-900/95 backdrop-blur-md rounded-3xl p-8 flex flex-col justify-center items-center text-center space-y-4">
+                            <div class="w-16 h-16 bg-gold-400/20 rounded-full flex items-center justify-center text-gold-400 text-3xl">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <h3 class="font-cinzel text-2xl font-bold text-white">預約訊息已成功發送！</h3>
+                            <p class="text-gray-300 text-xs leading-relaxed max-w-xs">
+                                感謝您的預約。我們的藝師團隊已收到您的需求，將會在 24 小時內與您聯繫！
+                            </p>
+                            <button id="reset-form-btn" class="px-6 py-2.5 border border-gold-400 text-gold-400 font-cinzel text-xs rounded-full hover:bg-gold-400 hover:text-black transition-colors">
+                                送出另一則訊息
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 08 AI COLLABORATION RECORD SECTION (符合講義 Step 4/6 要求) -->
+        <section id="ai-doc" class="py-16 px-6 md:px-12 max-w-5xl mx-auto border-t border-white/10">
+            <div class="glass-card p-8 rounded-3xl space-y-6">
+                <div class="flex items-center gap-3 border-b border-white/10 pb-4">
+                    <i class="fa-solid fa-robot text-gold-400 text-2xl"></i>
+                    <div>
+                        <h3 class="font-cinzel text-xl font-bold text-white">AI 協作紀錄與企劃說明 (AI Collaboration Log)</h3>
+                        <p class="text-xs text-gray-400">符合本作業「講義 Page 10 & 11」之規範紀錄</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4 text-xs text-gray-300">
+                    <div class="bg-dark-900/80 p-4 rounded-xl border border-white/5 space-y-2">
+                        <strong class="text-gold-400 block font-cinzel">1. 使用的 AI 提示詞 (Prompt Used):</strong>
+                        <p class="italic text-gray-400">
+                            「我正在製作一個【紋身工作室 (Tattoo Studio)】網站。目標對象是尋求高質感客製刺青與蓋圖服務的客戶。主要目的是展示專業品牌定位、作品分類集、Case Study 案例敘事與線上預約。請使用 HTML, CSS (Tailwind) 與 GSAP / ScrollTrigger 製作呈現流暢視覺動畫。」
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-dark-900/80 p-4 rounded-xl border border-white/5">
+                            <strong class="text-white block font-cinzel mb-1">AI 協助部分 (AI Contribution):</strong>
+                            <ul class="list-disc list-inside space-y-1 text-gray-400">
+                                <li>整理主題A (設計工作室) 架構與案例敘事步驟。</li>
+                                <li>生成高質感的深色美學 Tailwind 視覺樣式。</li>
+                                <li>撰寫 GSAP ScrollTrigger 與作品動態篩選腳本。</li>
+                            </ul>
+                        </div>
+                        <div class="bg-dark-900/80 p-4 rounded-xl border border-white/5">
+                            <strong class="text-white block font-cinzel mb-1">人類決策與修改 (Human Judgment):</strong>
+                            <ul class="list-disc list-inside space-y-1 text-gray-400">
+                                <li>調整文案符合專業紋身工作室用語（如醫用防護、一客一圖）。</li>
+                                <li>設計 Case Study 區塊，呈現背景->挑戰->策略->成果 4 步驟。</li>
+                                <li>優化 Mobile 響應式選單與平滑捲動體驗。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-black py-12 px-6 border-t border-white/10 text-center text-xs text-gray-500">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="font-cinzel tracking-widest text-white">
+                INK & SOUL TATTOO STUDIO © 2026. ALL RIGHTS RESERVED.
+            </div>
+            <div class="flex gap-6 text-base text-gray-400">
+                <a href="#" class="hover:text-gold-400 transition-colors"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="hover:text-gold-400 transition-colors"><i class="fa-brands fa-facebook"></i></a>
+                <a href="#" class="hover:text-gold-400 transition-colors"><i class="fa-brands fa-pinterest"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- GSAP INTERACTION SCRIPT -->
+    <script>
+        // Register ScrollTrigger plugin
+        gsap.registerPlugin(ScrollTrigger);
+
+        window.onload = function() {
+            // 01 Custom Cursor Movement
+            const cursor = document.getElementById('cursor');
+            const cursorDot = document.getElementById('cursor-dot');
+            
+            window.addEventListener('mousemove', (e) => {
+                gsap.to(cursor, { x: e.clientX - 16, y: e.clientY - 16, duration: 0.2 });
+                gsap.to(cursorDot, { x: e.clientX - 4, y: e.clientY - 4, duration: 0.05 });
+            });
+
+            // 02 Hero Section Entrance Animation (GSAP Timeline)
+            const heroTl = gsap.timeline();
+            heroTl.from('.hero-anim', {
+                y: 50,
+                opacity: 0,
+                duration: 1,
+                stagger: 0.2,
+                ease: 'power3.out'
+            });
+
+            // 03 ScrollTrigger Revealed Elements
+            gsap.utils.toArray('.scroll-reveal').forEach((element) => {
+                gsap.from(element, {
+                    scrollTrigger: {
+                        trigger: element,
+                        start: 'top 85%',
+                        toggleActions: 'play none none reverse'
+                    },
+                    y: 40,
+                    opacity: 0,
+                    duration: 0.8,
+                    ease: 'power2.out'
+                });
+            });
+
+            // 04 Case Study Narrative Sequence (GSAP Timeline with ScrollTrigger)
+            gsap.from('.case-card', {
+                scrollTrigger: {
+                    trigger: '#case-study',
+                    start: 'top 70%'
+                },
+                y: 30,
+                opacity: 0,
+                duration: 0.6,
+                stagger: 0.2,
+                ease: 'back.out(1.7)'
+            });
+
+            // 05 Portfolio Filter Interaction
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const portfolioItems = document.querySelectorAll('.portfolio-item');
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Active button styling
+                    filterBtns.forEach(b => {
+                        b.classList.remove('bg-gold-400', 'text-black', 'font-bold');
+                        b.classList.add('bg-dark-700', 'text-gray-300');
+                    });
+                    btn.classList.add('bg-gold-400', 'text-black', 'font-bold');
+                    btn.classList.remove('bg-dark-700', 'text-gray-300');
+
+                    const filterValue = btn.getAttribute('data-filter');
+
+                    portfolioItems.forEach(item => {
+                        const category = item.getAttribute('data-category');
+                        if (filterValue === 'all' || filterValue === category) {
+                            gsap.to(item, { scale: 1, opacity: 1, duration: 0.4, display: 'block' });
+                        } else {
+                            gsap.to(item, { scale: 0.8, opacity: 0, duration: 0.4, display: 'none' });
+                        }
+                    });
+                });
+            });
+
+            // 06 Booking Form Submission Callback
+            const bookingForm = document.getElementById('booking-form');
+            const successMsg = document.getElementById('form-success-msg');
+            const resetBtn = document.getElementById('reset-form-btn');
+
+            bookingForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                // Show animated success overlay
+                successMsg.classList.remove('hidden');
+                gsap.from(successMsg, { opacity: 0, scale: 0.9, duration: 0.4 });
+            });
+
+            resetBtn.addEventListener('click', () => {
+                bookingForm.reset();
+                successMsg.classList.add('hidden');
+            });
+
+            // 07 Mobile Navigation Drawer
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileDrawer = document.getElementById('mobile-drawer');
+            const mobileLinks = document.querySelectorAll('.mobile-link');
+            let isMenuOpen = false;
+
+            mobileMenuBtn.addEventListener('click', () => {
+                isMenuOpen = !isMenuOpen;
+                if (isMenuOpen) {
+                    mobileDrawer.classList.remove('opacity-0', 'pointer-events-none');
+                    mobileDrawer.classList.add('opacity-100', 'pointer-events-auto');
+                } else {
+                    mobileDrawer.classList.add('opacity-0', 'pointer-events-none');
+                    mobileDrawer.classList.remove('opacity-100', 'pointer-events-auto');
+                }
+            });
+
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    isMenuOpen = false;
+                    mobileDrawer.classList.add('opacity-0', 'pointer-events-none');
+                });
+            });
+        };
+    </script>
+</body>
+</html>
